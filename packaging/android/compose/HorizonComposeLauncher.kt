@@ -518,3 +518,261 @@ private fun HorizonCompilerWorkbench(
         }
     }
 }
+
+private enum class VoltNavTab(val label: String, val iconText: String, val tint: Color) {
+    Play("Play", "▶", Color(0xFF4CAF50)),
+    Mods("Mods", "🛠", Color(0xFFE0E0E0)),
+    Packs("Packs", "📦", Color(0xFFB57C4A)),
+    Shaders("Shaders", "◉", Color(0xFF80DEEA)),
+    Installed("Installed", "📁", Color(0xFFFFFFFF)),
+    Skins("Skins", "👕", Color(0xFF64B5F6)),
+    Settings("Settings", "⚙", Color(0xFFCFD8DC)),
+}
+
+/**
+ * Volt Launcher Plus — Glassmorphic Pill-Style Landscape Launcher UI.
+ */
+@Composable
+fun VoltLauncherPlusGlassUi(
+    versionLabel: String = "Android 1.0.1 · build 5",
+    profileName: String = "Profile 1",
+    rendererLabel: String = "Renderer: Vulkan / compatibility",
+    downloadLabel: String = "Download Minecraft 26.3",
+    onTouchLayoutClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
+    onRendererClick: () -> Unit = {},
+    onDownloadOrPlayClick: () -> Unit = {},
+    onTabSelected: (String) -> Unit = {},
+) {
+    var selectedTab by remember { mutableStateOf(VoltNavTab.Play) }
+
+    val glassBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0x664A4458),
+            Color(0x55322E3D),
+        ),
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF3E3557),
+                        Color(0xFF68557A),
+                        Color(0xFF2B2D42),
+                    ),
+                ),
+            )
+            .padding(16.dp),
+    ) {
+        // Top-left branding pill + version selector pill
+        Column(
+            modifier = Modifier.align(Alignment.TopStart),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = Color.Transparent,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(glassBrush),
+                tonalElevation = 0.dp,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Text(
+                        text = "V+",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                    )
+                    Column {
+                        Text(
+                            text = "Vortex Plus",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                        )
+                        Text(
+                            text = versionLabel,
+                            color = Color(0xFFD0C8E0),
+                            fontSize = 11.sp,
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                shape = CircleShape,
+                color = Color.Transparent,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(glassBrush),
+                onClick = onDownloadOrPlayClick,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text("🟩", fontSize = 13.sp)
+                    Text("▾", color = Color.White, fontSize = 12.sp)
+                }
+            }
+        }
+
+        // Center 3D skin preview placeholder
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(bottom = 36.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Canvas(modifier = Modifier.size(width = 96.dp, height = 160.dp)) {
+                // Head
+                drawRect(
+                    color = Color(0xFFE0B899),
+                    topLeft = Offset(size.width * 0.25f, 0f),
+                    size = androidx.compose.ui.geometry.Size(size.width * 0.5f, size.height * 0.28f),
+                )
+                // Hoodie torso
+                drawRect(
+                    color = Color(0xFF1E88E5),
+                    topLeft = Offset(size.width * 0.2f, size.height * 0.29f),
+                    size = androidx.compose.ui.geometry.Size(size.width * 0.6f, size.height * 0.36f),
+                )
+                // Legs
+                drawRect(
+                    color = Color(0xFF212121),
+                    topLeft = Offset(size.width * 0.24f, size.height * 0.66f),
+                    size = androidx.compose.ui.geometry.Size(size.width * 0.52f, size.height * 0.32f),
+                )
+            }
+        }
+
+        // Bottom controls + navigation bar
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                VoltGlassPill(
+                    icon = "🕹",
+                    label = "Touch layout",
+                    glassBrush = glassBrush,
+                    onClick = onTouchLayoutClick,
+                )
+                VoltGlassPill(
+                    icon = "🧑",
+                    label = profileName,
+                    glassBrush = glassBrush,
+                    onClick = onProfileClick,
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    VoltGlassPill(
+                        icon = "🎛",
+                        label = rendererLabel,
+                        glassBrush = glassBrush,
+                        onClick = onRendererClick,
+                    )
+                    VoltGlassPill(
+                        icon = "⬇",
+                        label = downloadLabel,
+                        glassBrush = glassBrush,
+                        onClick = onDownloadOrPlayClick,
+                    )
+                }
+            }
+
+            // Bottom wide glassmorphic navbar
+            Surface(
+                shape = CircleShape,
+                color = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CircleShape)
+                    .background(glassBrush),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    VoltNavTab.entries.forEach { tab ->
+                        val isSelected = tab == selectedTab
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) Color(0x33FFFFFF) else Color.Transparent,
+                            onClick = {
+                                selectedTab = tab
+                                onTabSelected(tab.label)
+                            },
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = tab.iconText,
+                                    color = tab.tint,
+                                    fontSize = 16.sp,
+                                )
+                                Text(
+                                    text = tab.label,
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VoltGlassPill(
+    icon: String,
+    label: String,
+    glassBrush: Brush,
+    onClick: () -> Unit,
+) {
+    Surface(
+        shape = CircleShape,
+        color = Color.Transparent,
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(glassBrush),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(text = icon, fontSize = 13.sp, color = Color.White)
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
