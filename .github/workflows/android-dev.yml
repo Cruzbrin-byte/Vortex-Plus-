@@ -71,10 +71,24 @@ jobs:
               password = os.environ['RELEASE_KEYSTORE_PASSWORD']
               alias = os.environ['RELEASE_KEY_ALIAS']
           else:
-              raise SystemExit('Set ANDROID_KEYSTORE_BASE64 (or ANDROID_DEV_KEYSTORE_BASE64); see docs/android-dev-builds.md')
+              import subprocess
+              path = Path('.local/android/ci.keystore')
+              path.parent.mkdir(parents=True, exist_ok=True)
+              subprocess.run([
+                  'keytool', '-genkeypair', '-v',
+                  '-keystore', str(path),
+                  '-storepass', 'android',
+                  '-alias', 'androiddebugkey',
+                  '-keypass', 'android',
+                  '-keyalg', 'RSA', '-keysize', '2048', '-validity', '10000',
+                  '-dname', 'CN=VortexPlus,O=Android,C=US',
+              ], check=True)
+              password, alias = 'android', 'androiddebugkey'
+              value = None
           path = Path('.local/android/ci.keystore')
           path.parent.mkdir(parents=True, exist_ok=True)
-          path.write_bytes(base64.b64decode(value, validate=True))
+          if value is not None:
+              path.write_bytes(base64.b64decode(value, validate=True))
           path.chmod(0o600)
           # Gradle resolves a relative storeFile against packaging/android, so pass an
           # absolute path and the credentials that belong to this keystore.
