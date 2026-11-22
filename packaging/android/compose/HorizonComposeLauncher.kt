@@ -230,6 +230,24 @@ fun HorizonComposeLauncherApp(
     onRunPortPackCompiler: (HorizonCompilerMode, String) -> Unit = { _, _ -> },
 ) {
     HorizonMaterialYouTheme {
+        VoltLauncherPlusGlassUi(
+            profileName = "Profile $profileNumber",
+            onTouchLayoutClick = onOpenControlEditor,
+            onDownloadOrPlayClick = onLaunchGame,
+        )
+    }
+}
+
+@Composable
+private fun LegacyHorizonComposeLauncherApp(
+    playerName: String = "byzindian",
+    profileNumber: Int = 1,
+    activeModsCount: Int = 12,
+    onLaunchGame: () -> Unit = {},
+    onOpenControlEditor: () -> Unit = {},
+    onRunPortPackCompiler: (HorizonCompilerMode, String) -> Unit = { _, _ -> },
+) {
+    HorizonMaterialYouTheme {
         var currentPage by remember { mutableStateOf(HorizonDestination.Play) }
         var compilerMode by remember { mutableStateOf(HorizonCompilerMode.JarMod) }
         var compilerQuery by remember { mutableStateOf("") }
